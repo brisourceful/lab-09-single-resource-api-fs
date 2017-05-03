@@ -2,6 +2,7 @@
 
 const debug = require('debug')('http:storage');
 const storage = {};
+const Promise = require('bluebird');
 const fs = Promise.promisifyAll(require('fs'), {suffix: 'Prom'});
 
 module.exports = exports = {};
@@ -15,7 +16,7 @@ exports.createItem = function(schema, item) {
 
   storage[schema][item.id] = item;
 
-  fs.writeFileProm('./data/${item.id}.txt', JSON.stringify(item))
+  fs.writeFileProm(`${__dirname}/../data/${item.id}.txt`, JSON.stringify(item))
   .then(data => {
     console.log('called fs.writeFileProm', data);
   })
@@ -34,7 +35,7 @@ exports.fetchItem = function(schema, id) {
   let watch = schema[id];
   if (!watch) return (new Error('Watch does not exist'));
 
-  return fs.readFileProm(`./data/${id}.txt`)
+  return fs.readFileProm(`${__dirname}/../data/${id}.txt`)
   .then(data => {
     console.log('json.parse data', JSON.parse(data));
     return JSON.parse(data);
@@ -53,9 +54,9 @@ exports.updateItem = function(schema, id){
 
   if(!schema[id]) return (new Error('Watch does not exist'));
 
-  return fs.readFileProm(`./data/${id}.txt`)
+  return fs.readFileProm(`${__dirname}/../data/${id}.txt`)
     .then(data => {
-      fs.writeFileProm(`./data/${id}.txt`)
+      fs.writeFileProm(`${__dirname}/../data/${id}.txt`)
       .then(data => {
         return JSON.parse(data);
       });
@@ -71,9 +72,9 @@ exports.deleteItem = function(schema, id){
   if(!schema) return (new Error('schema required'));
   if(!id) return (new Error('id required'));
 
-  return fs.unlinkProm(`./data/${id}.txt`)
+  return fs.unlinkProm(`${__dirname}/../data/${id}.txt`)
   .then(data => {
     console.log('Called fs.unlinkProm', data);
   })
-  .catch(console.error)
+  .catch(console.error);
 };

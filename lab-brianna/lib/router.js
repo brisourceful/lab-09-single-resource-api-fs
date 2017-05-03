@@ -25,6 +25,11 @@ Router.prototype.post = function(endpoint, callback) {
 };
 
 Router.prototype.put = function(endpoint, callback) {
+  debug('#UPDATE');
+  this.routes.DELETE[endpoint] = callback;
+};
+
+Router.prototype.delete = function(endpoint, callback) {
   debug('#DELETE');
   this.routes.DELETE[endpoint] = callback;
 };
@@ -46,6 +51,7 @@ Router.prototype.route = function () {
       res.end();
     })
     .catch(err => {
+      console.error(err);
       res.writeHead(400, {'Content-Type': 'text/plain'});
       res.write('bad request');
       res.end();
